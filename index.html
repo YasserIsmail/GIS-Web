@@ -43,6 +43,22 @@
             visibility: hidden;
             overflow: hidden;
         }
+        @media only screen and (max-width: 720px) {
+            #base {
+                margin-top: 70px;
+            }
+            #export {
+                margin-top: 70px;
+            }
+        }
+        /* @media only screen and (width: 800px) {
+            #base {
+                margin-top: 70px;
+            }
+            #export {
+                margin-top: 70px;
+            }
+        } */
     </style>
     <!-- <script>
             document.querySelector("body").style.visibility = "hidden"; 
@@ -53,8 +69,8 @@
     <div id="loader" class="center"></div> 
     <header style="position: fixed;" class="fixed-top navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow d-flex justify-content-start">
         <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 m-0  border-secondary border-right text-center" href="#">Yasser Isamil</a>
-        <div style="border-radius: 0%;" id="search" class=" p-0 ml-4 mr-2 w-100"></div>
-        <ul class="navbar-nav px-3 list-group-horizontal ml-0">
+        <div style="border-radius: 0%;" id="search" class="p-0 ml-4 mr-2 w-100"></div>
+        <ul class="navbar-nav px-3 list-group-horizontal ml-auto mr-auto">
             <li class="nav-item text-nowrap mr-3" title="Select by Attribute">
                 <a class="nav-link" href="#" data-toggle="modal" data-target="#select">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-square-fill" viewBox="0 0 16 16">
@@ -149,11 +165,11 @@
                 <!-- Basemap & Export div -->
                 <div style="z-index: 1;" class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mt-5 pt-3 pb-2 mb-0">
                     <!-- Basemap Gallery Button&Dropdown -->
-                    <button style="z-index: 1;" type="button" class="btn btn-sm btn btn-primary dropdown-toggle" data-toggle="dropdown">Basemap Gallery</button>
+                    <button id="base" style="z-index: 1;" type="button" class="btn btn-sm btn btn-primary dropdown-toggle" data-toggle="dropdown">Basemap Gallery</button>
                     <div style="z-index: 2;" id="BasemapGallery" class="dropdown-menu"></div>
                     <!--  -->
                     <!-- Export Button -->
-                    <button style="z-index: 1;" type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#Export">
+                    <button id="export" style="z-index: 1;" type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#Export">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer-fill" viewBox="0 0 16 16">
                             <path d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2H5zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1z"/>
                             <path d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2V7zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
