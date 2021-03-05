@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIS Web with ArcGIS API for JavaScript</title>
+    <link rel="icon" href="assets/location.svg">
+    <!-- bootstrap CSS,JS & jquery & popper-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!--  -->
+    <!-- ArcGIS API 4.18 -->
+    <link rel="stylesheet" href="https://js.arcgis.com/4.18/esri/themes/light/main.css">
+    <script src="https://js.arcgis.com/4.18/"></script>
+    <!--  -->
+    <style>
+        #loader { 
+            border: 12px solid #f3f3f3; 
+            border-radius: 50%; 
+            border-top: 12px solid #007bff; 
+            width: 70px; 
+            height: 70px; 
+            animation: spin 1s linear infinite; 
+        } 
+          
+        @keyframes spin { 
+            100% { 
+                transform: rotate(360deg); 
+            } 
+        } 
+          
+        .center { 
+            position: absolute; 
+            top: 0; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            margin: auto;
+        }
+        body{
+            visibility: hidden;
+            overflow: hidden;
+        }
+    </style>
+    <!-- <script>
+            document.querySelector("body").style.visibility = "hidden"; 
+            document.querySelector( "#loader").style.visibility = "visible"; 
+    </script> -->
+</head>
+<body onload="myfunction()">
+    <div id="loader" class="center"></div> 
+    <header style="position: fixed;" class="fixed-top navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow d-flex justify-content-start">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 m-0  border-secondary border-right text-center" href="#">Yasser Isamil</a>
+        <div style="border-radius: 0%;" id="search" class="form-control p-0 ml-4 mr-2 w-100"></div>
+        <ul class="navbar-nav px-3 list-group-horizontal ml-0">
+            <li class="nav-item text-nowrap mr-3" title="Select by Attribute">
+                <a class="nav-link" href="#" data-toggle="modal" data-target="#select">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-square-fill" viewBox="0 0 16 16">
+                        <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm3.496 6.033a.237.237 0 0 1-.24-.247C5.35 4.091 6.737 3.5 8.005 3.5c1.396 0 2.672.73 2.672 2.24 0 1.08-.635 1.594-1.244 2.057-.737.559-1.01.768-1.01 1.486v.105a.25.25 0 0 1-.25.25h-.81a.25.25 0 0 1-.25-.246l-.004-.217c-.038-.927.495-1.498 1.168-1.987.59-.444.965-.736.965-1.371 0-.825-.628-1.168-1.314-1.168-.803 0-1.253.478-1.342 1.134-.018.137-.128.25-.266.25h-.825zm2.325 6.443c-.584 0-1.009-.394-1.009-.927 0-.552.425-.94 1.01-.94.609 0 1.028.388 1.028.94 0 .533-.42.927-1.029.927z"/>
+                    </svg>
+                </a>
+            </li>
+            <li class="nav-item text-nowrap mr-3" title="Remove Selection">
+                <a class="nav-link" href="#" onclick="removerselection()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eraser-fill" viewBox="0 0 16 16">
+                        <path d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828l6.879-6.879zm.66 11.34L3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293l.16-.16z"/>
+                    </svg>
+                </a>
+            </li>
+            <li class="nav-item text-nowrap mr-3" title="Zoom to Layer">
+                <a class="nav-link" href="#" data-toggle="modal" data-target="#zoom_to_layer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-tv-fill" viewBox="0 0 16 16">
+                        <path d="M2.5 13.5A.5.5 0 0 1 3 13h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zM2 2h12s2 0 2 2v6s0 2-2 2H2s-2 0-2-2V4s0-2 2-2z"/>
+                    </svg>
+                </a>
+            </li>
+            <li class="nav-item text-nowrap mr-3">
+                <a class="nav-link" id="btn_bookmark" href="#" title="Bookmarks">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-fill" viewBox="0 0 16 16">
+                        <path d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/>
+                    </svg>
+                </a>
+            </li>            
+            <li class="nav-item text-nowrap mr-3">
+                <a class="nav-link" id="btn_dir" href="#" title="Directions">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cursor-fill" viewBox="0 0 16 16">
+                        <path d="M14.082 2.182a.5.5 0 0 1 .103.557L8.528 15.467a.5.5 0 0 1-.917-.007L5.57 10.694.803 8.652a.5.5 0 0 1-.006-.916l12.728-5.657a.5.5 0 0 1 .556.103z"/>
+                    </svg>
+                </a>
+            </li>            
+            <li class="nav-item text-nowrap mr-3" title="Distance Measurement">
+                <a class="nav-link " id="distance" href="#">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-rulers" viewBox="0 0 16 16">
+                        <path d="M1 0a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h5v-1H2v-1h4v-1H4v-1h2v-1H2v-1h4V9H4V8h2V7H2V6h4V2h1v4h1V4h1v2h1V2h1v4h1V4h1v2h1V2h1v4h1V1a1 1 0 0 0-1-1H1z"/>
+                    </svg>
+                </a>
+            </li>
+            <li class="nav-item text-nowrap mr-3" title="Area Measurement">
+                <a class="nav-link" id="area" href="#">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bounding-box" viewBox="0 0 16 16">
+                        <path d="M5 2V0H0v5h2v6H0v5h5v-2h6v2h5v-5h-2V5h2V0h-5v2H5zm6 1v2h2v6h-2v2H5v-2H3V5h2V3h6zm1-2h3v3h-3V1zm3 11v3h-3v-3h3zM4 15H1v-3h3v3zM1 4V1h3v3H1z"/>
+                    </svg>
+                </a>
+            </li>
+            <li class="nav-item text-nowrap mr-3" title="Clear Measurements">
+                <a class="nav-link" id="clear" href="#">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                    </svg>
+                </a>
+            </li>
+        </ul>
+        
+    </header>
+    <div class="container-fluid ">
+        <div class="row">
+            <!-- start nav -->
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 pl-0 pr-0 d-md-block bg-light sidebar collapse border m-0 ">
+                <div class="position-sticky pt-1">
+                    <!-- layer navigator -->
+                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-5 text-muted">
+                        <button type="button" style="background: none;border: none;" class="mybtn p-0 m-0 " data-toggle="modal" data-target="#Remove" title="Remove Layer">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash-circle "
+                              viewBox="0 0 16 16">
+                              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                              <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z" />
+                            </svg>
+                        </button>
+                        <span>Layers</span>
+                        <button type="button" style="background: none;border: none;" class="mybtn p-0 m-0" data-toggle="modal" data-target="#Add" title="Add Layer">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle"
+                            viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                            </svg>
+                        </button>
+                    </h6>
+                    <!--  -->
+                    <!-- list_layer -->
+                    <div style="min-height: 495px;height:495px;overflow: auto" id="listlayer" class="col-md-12 col-lg-12 bg-light border border-left-0 border-right-0 border-bottom-0 pt-1 pb-1 m-0 mt-4"></div>
+                    <!--  -->
+                </div>
+            </nav>
+            <!--  -->
+            <!-- start main -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <!-- Basemap & Export div -->
+                <div style="z-index: 1;" class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mt-5 pt-3 pb-2 mb-0">
+                    <!-- Basemap Gallery Button&Dropdown -->
+                    <button style="z-index: 1;" type="button" class="btn btn-sm btn btn-primary dropdown-toggle" data-toggle="dropdown">Basemap Gallery</button>
+                    <div style="z-index: 2;" id="BasemapGallery" class="dropdown-menu"></div>
+                    <!--  -->
+                    <!-- Export Button -->
+                    <button style="z-index: 1;" type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#Export">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer-fill" viewBox="0 0 16 16">
+                            <path d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2H5zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1z"/>
+                            <path d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2V7zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
+                        </svg>
+                        Export
+                    </button>
+                    <!--  -->
+                </div>
+                <!--  -->
+                <!-- hide&show basemap toggle & FeatueTable Button -->
+                <div style="z-index: 1;" class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-1 pb-2 mb-0">
+                    <!-- hide&show basemap toggle -->
+                    <div style="z-index: 1"  data-placement="bottom" title="Hide/Show Basemap" class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" checked="checked" id="hideshow_Basemap"/>
+                        <label class="custom-control-label" for="hideshow_Basemap"></label>
+                        <script>
+                          $(function() {
+                            $('#hideshow_Basemap').change(function() {
+                              var x = ($(this).prop('checked'))
+                              if (x===true){
+                                my_map.basemap='streets-navigation-vector'
+                              }
+                              else{
+                                my_map.basemap=null
+                              }
+                            })
+                          })
+                        </script>                
+                    </div>
+                    <!--  -->
+                    <!-- Featur Table Button -->
+                    <button  id="btn_table" style="z-index: 1;" type="button" class="btn btn-sm btn-primary d-flex align-items-center" data-placement="bottom" title="Feature Table">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-text-fill" viewBox="0 0 16 16">
+                            <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM5 4h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1zm0 2h3a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1z"/>
+                        </svg>
+                        <!-- Data table -->
+                    </button>
+                    <!--  -->
+                </div>
+                <!-- Map view div -->
+                <div id="mapview"></div>
+                <div id="toast_table"  class="toast_table shadow" data-autohide="false">
+                    <div style="background-color: white; margin: 0; height: 45px;" class="p-1 pl-2 pr-2 border-muted border-bottom align-items-center">
+                        <strong class="mr-auto text-primary">Feature Table</strong>
+                        <button id="colse_table" type="button" class="mybtn ml-2 mb-1 close">&times;</button>
+                        <select onchange="choose_table()" style="padding-left: 0%;position: absolute;left: 430px ;top: 0;bottom: 0;-webkit-appearance: none;border-radius: 0%; height: 45px;text-align: center;text-align-last: center;" class="form-control con m-0 col-3 border-left-0 border-right-0 border-top-0" id="choose_table">
+                            <option value="" disabled selected>Select Layer</option>
+                        </select>   
+                    </div>
+                    <div style="overflow: auto; height: 275px;" id="table" class=""></div>
+                    <script>
+                        $('#toast_table').hide()
+                        $('#colse_table').click(function(){
+                            $('#toast_table').hide()
+                        })
+                        $('#btn_table').click(function(){
+                            document.getElementById('table').innerHTML=null
+                            $('#toast_table').show()
+                        })
+                    </script>
+                </div>        
+            </main>
+            <!--  -->
+        </div>
+        <div  id="toast_direction" class="toast_direction shadow" data-autohide="false">
+            <div style="background-color: white; margin: 0; height: 45px;" class="p-1 pl-2 pr-2 border-muted border-bottom">
+              <strong class="mr-auto text-primary">Directions</strong>
+              <button id="colse_dir" type="button" class="mybtn ml-2 mb-1 close">&times;</button>
+            </div>
+            <div style="overflow-y: auto; height: 275px;" id="directions" class=""></div>
+            <script>
+                $('#toast_direction').hide()
+                $('#colse_dir').click(function(){
+                    $('#toast_direction').hide()
+                })
+                $('#btn_dir').click(function(){
+                    document.getElementById('directions').innerHTML=null
+                    $('#toast_direction').show()
+                    require(['esri/widgets/Directions'],function(Directions){
+                        var directionsWidget = new Directions({
+                            view: view,
+                            container:'directions',
+                        })
+                    })
+
+                    var z_book = $("#toast_bookmark").css("z-index")
+                    $('#toast_direction').css({'z-index':z_book+1})
+                })
+            </script>
+        </div>
+        <div  id="toast_bookmark" class="toast_bookmark shadow" data-autohide="false">
+            <div style="background-color: white; margin: 0; height: 45px;" class="p-1 pl-2 pr-2 border-muted border-bottom">
+              <strong class="mr-auto text-primary">Bookmarks</strong>
+              <button id="colse_bookmark" type="button" class="mybtn ml-2 mb-1 close">&times;</button>
+            </div>
+            <div style="overflow-y: auto; height: 275px;" id="bookmark" class=""></div>
+            <script>
+                $('#toast_bookmark').hide()
+                $('#colse_bookmark').click(function(){
+                    $('#toast_bookmark').hide()
+                })
+                $('#btn_bookmark').click(function(){
+                    document.getElementById('bookmark').innerHTML=null
+                    $('#toast_bookmark').show()
+                    require(['esri/widgets/Bookmarks'],function(Bookmarks){
+                        bookmarks = new Bookmarks({
+                        view: view,
+                        // allows bookmarks to be added, edited, or deleted
+                        editingEnabled: true,
+                        container:'bookmark'
+                    });
+                    })
+                    var z_dir = $("#toast_direction").css("z-index")
+                    $('#toast_bookmark').css({'z-index':z_dir+1})
+                })
+            </script>
+        </div>
+    </div>
+<!-- Modals -->
+<!-- Add layer -->
+<div class="modal fade" id="Add">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add Layer</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group m-0">
+                    <input id='url' type="text" class="form-control" placeholder="URL">
+                    <!-- <kbd class="bg-danger">please enter URL</kbd> -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="addlayer()" type="button" class="btn btn-primary" data-dismiss="modal">Add</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--  -->
+<!-- Remove layer -->
+<div class="modal fade" id="Remove">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Remove Layer</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label></label>
+                    <select class="form-control" id="remove_option">
+                        <option value="" disabled selected>Select Layer</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="removerlayer()" type="button" class="btn btn-primary"
+                    data-dismiss="modal">Remove</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--  -->
+<!-- Export map | Layout -->
+<div class="modal fade" id="Export">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Export Map</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="Export_div"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--  -->
+<!-- Select -->
+<div class="modal fade" id="select">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Select by Attribute</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <select style="-webkit-appearance: none;" onchange="get_fields()" class="form-control mt-2 mb-2" id="lyrs_to_select">
+                        <option value="" disabled selected>Select Layer</option>
+                        <option value="" >Trailheads</option>
+                        <option value="" >Trails</option>
+                    </select>
+                    <div class="row m-0">
+                        <select onchange="get_unique_values()" style="-webkit-appearance: none;border-radius: 0%;" class="form-control m-0 mt-2 mb-2 col-5" id="fields">
+                            <option value="" disabled selected>Select Fields</option>
+                        </select>
+                        <select style="-webkit-appearance: none;text-align: center;text-align-last: center;border-radius: 0%" class="form-control mt-2 mb-2 col-2 text-center bg-secondary text-white" id="operation">
+                            <option style="text-align: left;"  value="" >=</option>
+                            <option style="text-align: left;"  value="" ><</option>
+                            <option style="text-align: left;"  value="" >></option>
+                            <option style="text-align: left;"  value="" ><=</option>
+                            <option style="text-align: left;"  value="" >>=</option>
+                        </select>
+                        <select style="-webkit-appearance: none;border-radius: 0%" class="form-control m-0 mt-2 mb-2 col-5" id="unique_values">
+                            <option value=""disabled selected>unique values</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="get_where_statment()" type="button" class="btn btn-primary" data-dismiss="modal">Run</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--  -->
+<!-- Zoom to layer -->
+<div class="modal fade" id="zoom_to_layer">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Select Layer to zooming</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label></label>
+                    <select class="form-control" id="select_to">
+                        <option value="" disabled selected>Select Layer</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="zoom_to_layer()" type="button" class="btn btn-primary"
+                    data-dismiss="modal">Zoom</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--  -->
+
+<!--  -->
+<link rel="stylesheet" href="assets/my_files/css/arcgis_api_4.css">
+<script src="assets/my_files/js/arcgis_api_4.js"></script>
+<script src="assets/my_files/js/j_query.js"></script>
+<script>
+    function myfunction(){
+        $(document).ready(function(){
+            $('[title="Find my location"]').tooltip();
+        });
+    }
+</script>
+<script> 
+    document.onreadystatechange = function() { 
+        if (document.readyState !== "complete") { 
+            document.querySelector("body").style.visibility = "hidden"; 
+            document.querySelector( "#loader").style.visibility = "visible"; 
+        } else { 
+            document.querySelector( 
+              "#loader").style.display = "none"; 
+            document.querySelector( 
+              "body").style.visibility = "visible"; 
+        } 
+    }; 
+</script>
+</body>
+</html>
+

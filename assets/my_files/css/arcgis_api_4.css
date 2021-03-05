@@ -1,0 +1,107 @@
+  html,body,div.row,div.container-fluid,nav,#mapview{
+    height: 100%;
+  }
+  #BasemapGallery{
+    width: 240px;
+    height: 250px;
+  }
+  ul.navbar-nav{
+    border-radius: 0%;
+  }
+  .esri-view{
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .esri-view  .esri-view-surface--inset-outline:focus::after{
+    outline: none !important;
+  }
+  .esri-view{
+      width: 100%;
+      height: 100%;
+  }
+  .esri-attribution__powered-by,.esri-attribution__sources{
+      display: none;
+  }
+  /* .esri-locate .esri-widget--button .esri-widget{
+      background-color: violet;
+  } */
+  #locate,#distance,#area,#clear{
+    background-color: unset;
+    height: 100%;
+  }
+  #locate:focus,.mybtn:focus,.esri-layer-list__item-actions-menu-item:focus,.esri-layer-list__item-label:focus,.esri-button-menu__item:focus{
+    outline: none !important;
+  }
+  .esri-icon-measure-line .esri-icon-measure-area .esri-icon-trash .esri-icon-locate{
+    color: white;
+    margin: 0;
+    padding-top: 5px;
+  }
+  .esri-directions__content-title{
+    display: none;
+  }
+  .esri-directions__sign-in-button{
+    display: none;
+  }
+  .nav-link{
+    cursor: pointer;
+  }
+  .toast_direction {
+    width: 320px;
+    height: 320px;
+    position: absolute;
+    right: 10px;
+    bottom: 15px;
+    background-color:white;
+    z-index: 1000;
+  }
+  .toast_bookmark {
+    width: 320px;
+    height: 320px;
+    position: absolute;
+    right: 10px;
+    bottom: 15px;
+    background-color:white;
+    z-index: 1000;
+  }
+  .docking-control {
+    width: 320px;
+    height: 320px;
+    position: absolute;
+    right: 10px;
+    bottom: 15px;
+    background-color:white;
+    z-index: 1000;
+  }
+  .toast_table{
+    width: 100%;
+    height: 320px;
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    background-color:white;
+  }
+.esri-button-menu__content{
+  max-height: 230px;
+}
+.esri-locate{
+  background-color: #007bff;
+  outline: none !important;
+}
+.esri-locate:hover{
+  background-color: #007bff;
+  outline: none !important;
+}
+.esri-icon-locate{
+  color: white;
+}
+.esri-icon-loading-indicator{
+  color: white;
+}
+div.esri-widget__content--empty{
+  background-color: white;
+}
+.esri-search__submit-button{
+  /* display: none; */
+}
