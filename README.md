@@ -3,7 +3,10 @@ build web GIS app contains common GIS tools such as measuring distance & area, f
 
 ![UI](assets/img/UI.jpg)
 
-and This is a result of my App and that is making a map, also over there many capability you can via my App.
+This is a result of my App and that is making a map.
+
 ![map](assets/img/Aresult.jpg)
+
+also over there many capability you can via my App just visit the below link
 
 https://gisweb.netlify.app/#
